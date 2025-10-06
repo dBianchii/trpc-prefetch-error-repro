@@ -3,9 +3,10 @@ import { Suspense } from "react";
 import { prefetch, trpc } from "~/utils/hydration-helpers";
 import { useTRPC } from "~/utils/trpc";
 import { ClientComponent } from "./client-component";
+import { cookies } from "next/headers";
 
-export default function IndexPage() {
-
+export const dynamic = "force-dynamic"
+export default async function IndexPage() {
   prefetch(trpc.getSomeData.queryOptions())
 
   return (

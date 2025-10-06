@@ -1,7 +1,9 @@
 import type { PropsWithChildren } from 'react';
 import { TRPCReactProvider } from '../utils/trpc';
+import { cookies, headers } from 'next/headers';
 
-export default function Layout({ children }: PropsWithChildren) {
+export default async function Layout({ children }: PropsWithChildren) {
+  
   return (
     <html lang="en">
       <body>
