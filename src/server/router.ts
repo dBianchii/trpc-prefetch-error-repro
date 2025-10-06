@@ -2,8 +2,9 @@ import { TRPCError } from '@trpc/server';
 import { publicProcedure, router } from '~/server/trpc';
 
 export const appRouter = router({
-  getSomeData: publicProcedure.query(() => {
+  getSomeData: publicProcedure.query(async () => {
 
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     return "Heres the data"
   }),
   naturalError: publicProcedure.mutation(() => {

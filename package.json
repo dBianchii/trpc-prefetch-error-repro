@@ -2,7 +2,7 @@
   "name": "examples-next-minimal",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "lint": "eslint --cache src",
     "start": "next start"
@@ -13,7 +13,7 @@
     "@trpc/tanstack-react-query": "11.4.4",
     "@trpc/react-query": "11.4.4",
     "@trpc/server": "11.4.4",
-    "next": "14.2.20",
+    "next": "15.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "superjson": "^1.12.4",
