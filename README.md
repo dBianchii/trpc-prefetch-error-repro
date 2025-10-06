@@ -1,20 +1,15 @@
-# Next.js + tRPC
-
-This example shows how you can make a typed query using a minimal implementation of tRPC following [`this as a reference`](https://trpc.io/docs/client/nextjs).
-
-## Setup
+To reproduce the issue, run the following commands:
 
 ```bash
-npx create-next-app --example https://github.com/trpc/trpc --example-path examples/next-minimal-starter trpc-minimal-starter
-cd trpc-minimal-starter
-npm i
-npm run dev
+pnpm i
+pnpm dev
 ```
 
-## Development
+Then go to http://localhost:3000/login and click the button to set the cookie. You will be redirected to the home page.
 
-### Start project
+Then, refresh the page. You will get an error:
 
-```bash
-npm run dev        # starts next.js
+```txt
+Error: Switched to client rendering because the server rendering errored:
+You dont have FAKE_AUTH cookie
 ```
