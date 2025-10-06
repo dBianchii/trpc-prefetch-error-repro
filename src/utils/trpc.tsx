@@ -5,40 +5,13 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-import { createTRPCClient, httpBatchLink } from '@trpc/client';
+import { createTRPCClient, httpBatchLink, httpBatchStreamLink } from '@trpc/client';
 import { createTRPCContext } from '@trpc/tanstack-react-query';
 import { useState } from 'react';
 import SuperJSON from 'superjson';
 
 import type { AppRouter } from '~/server/router';
-
-const createQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        // With SSR, we usually want to set some default staleTime
-        // above 0 to avoid refetching immediately on the client
-        staleTime: 30 * 1000,
-      },
-      dehydrate: {
-        serializeData: SuperJSON.serialize,
-        shouldDehydrateQuery: (query) =>
-          defaultShouldDehydrateQuery(query) ||
-          query.state.status === 'pending',
-        shouldRedactErrors: () => {
-          // We should not catch Next.js server errors
-          // as that's how Next.js detects dynamic pages
-          // so we cannot redact them.
-          // Next.js also automatically redacts errors for us
-          // with better digests.
-          return false;
-        },
-      },
-      hydrate: {
-        deserializeData: SuperJSON.deserialize,
-      },
-    },
-  });
+import { createQueryClient } from './query-client';
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;
 const getQueryClient = () => {
@@ -59,7 +32,7 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
   const [trpcClient] = useState(() =>
     createTRPCClient<AppRouter>({
       links: [
-        httpBatchLink({
+        httpBatchStreamLink({
           transformer: SuperJSON,
           url: getBaseUrl() + '/api/trpc',
           headers() {
