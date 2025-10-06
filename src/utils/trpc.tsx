@@ -3,16 +3,14 @@
 import {
   defaultShouldDehydrateQuery,
   QueryClient,
+  QueryClientProvider,
 } from '@tanstack/react-query';
-import { useState } from 'react';
-import { QueryClientProvider } from '@tanstack/react-query';
-import {
-  createTRPCClient,
-  httpBatchStreamLink,
-} from '@trpc/client';
+import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { createTRPCContext } from '@trpc/tanstack-react-query';
+import { useState } from 'react';
 import SuperJSON from 'superjson';
-import { AppRouter } from '~/server/router';
+
+import type { AppRouter } from '~/server/router';
 
 const createQueryClient = () =>
   new QueryClient({
@@ -53,7 +51,7 @@ const getQueryClient = () => {
   }
 };
 
-export const { useTRPC, TRPCProvider } = createTRPCContext<AppRouter>();
+export const {TRPCProvider, useTRPC} = createTRPCContext<AppRouter>();
 
 export function TRPCReactProvider(props: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
@@ -61,7 +59,7 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
   const [trpcClient] = useState(() =>
     createTRPCClient<AppRouter>({
       links: [
-        httpBatchStreamLink({
+        httpBatchLink({
           transformer: SuperJSON,
           url: getBaseUrl() + '/api/trpc',
           headers() {
