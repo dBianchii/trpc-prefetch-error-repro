@@ -7,9 +7,9 @@
  * @see https://trpc.io/docs/v11/router
  * @see https://trpc.io/docs/v11/procedures
  */
-import { TRPCError, initTRPC } from '@trpc/server';
-import { headers } from 'next/headers';
-import SuperJSON from 'superjson';
+import { TRPCError, initTRPC } from "@trpc/server";
+import { cookies, headers } from "next/headers";
+import SuperJSON from "superjson";
 
 /**
  * @see https://trpc.io/docs/server/context
@@ -18,7 +18,7 @@ export const createTRPCContext = (opts: { headers: Headers }) => ({
   ...opts,
 });
 
-const t = initTRPC.context<{headers: Headers}>().create({
+const t = initTRPC.context<{ headers: Headers }>().create({
   transformer: SuperJSON,
 });
 
@@ -27,16 +27,24 @@ const t = initTRPC.context<{headers: Headers}>().create({
  **/
 export const publicProcedure = t.procedure;
 
-export const protectedProcedute = publicProcedure.use(async ({next, ctx}) => {
+export const protectedProcedute = publicProcedure.use(async ({ next, ctx }) => {
+  const cooks = await cookies();
 
-  if (!ctx.headers.get("FAKE_AUTH")) throw new TRPCError({
-    "code": "UNAUTHORIZED",
-    "message": "You are not authorized, yo pass me the FAKE_AUTH"
-  })
+  console.log(
+    "Cookie value in protected procedure is:",
+    cooks.get("FAKE_AUTH")?.value
+  );
+
+  if (!cooks.get("FAKE_AUTH")?.value) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "You dont have FAKE_AUTH cookie",
+    });
+  }
 
   return next({
-    ctx
-  })
-})
+    ctx,
+  });
+});
 
 export const router = t.router;

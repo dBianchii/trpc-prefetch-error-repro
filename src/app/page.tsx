@@ -1,22 +1,24 @@
-import { useMutation } from "@tanstack/react-query";
-import { Suspense } from "react";
-import { prefetch, trpc } from "~/utils/hydration-helpers";
-import { useTRPC } from "~/utils/trpc";
-import { ClientComponent } from "./client-component";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { HydrateClient, prefetch, trpc } from "~/utils/hydration-helpers";
+import { ClientComponent } from "./client-component";
+import { Suspense } from "react";
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 export default async function IndexPage() {
-  prefetch(trpc.getSomeData.queryOptions())
+  const cooked = await cookies();
+  if (!cooked.get("FAKE_AUTH")?.value) {
+    redirect("/login");
+  }
+
+  prefetch(trpc.getSomeData.queryOptions());
 
   return (
     <div>
       <h2>Query</h2>
-
-      <button>Clicke me</button>
-      {/* <Suspense fallback="loading...">
-        <ClientComponent/>
-      </Suspense> */}
+      <Suspense fallback="loading...">
+        <ClientComponent />
+      </Suspense>
     </div>
   );
 }

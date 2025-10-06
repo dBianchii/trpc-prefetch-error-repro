@@ -3,8 +3,8 @@ import { protectedProcedute, publicProcedure, router } from '~/server/trpc';
 
 export const appRouter = router({
   getSomeData: protectedProcedute.query(async () => {
-
     await new Promise((resolve) => setTimeout(resolve, 1000));
+
     return "Heres the data"
   }),
   naturalError: publicProcedure.mutation(() => {
