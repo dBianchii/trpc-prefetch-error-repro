@@ -7,10 +7,18 @@
  * @see https://trpc.io/docs/v11/router
  * @see https://trpc.io/docs/v11/procedures
  */
-import { initTRPC } from '@trpc/server';
+import { TRPCError, initTRPC } from '@trpc/server';
+import { headers } from 'next/headers';
 import SuperJSON from 'superjson';
 
-const t = initTRPC.create({
+/**
+ * @see https://trpc.io/docs/server/context
+ */
+export const createTRPCContext = (opts: { headers: Headers }) => ({
+  ...opts,
+});
+
+const t = initTRPC.context<{headers: Headers}>().create({
   transformer: SuperJSON,
 });
 
@@ -18,5 +26,17 @@ const t = initTRPC.create({
  * Unprotected procedure
  **/
 export const publicProcedure = t.procedure;
+
+export const protectedProcedute = publicProcedure.use(async ({next, ctx}) => {
+
+  if (!ctx.headers.get("FAKE_AUTH")) throw new TRPCError({
+    "code": "UNAUTHORIZED",
+    "message": "You are not authorized, yo pass me the FAKE_AUTH"
+  })
+
+  return next({
+    ctx
+  })
+})
 
 export const router = t.router;

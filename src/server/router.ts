@@ -1,8 +1,8 @@
 import { TRPCError } from '@trpc/server';
-import { publicProcedure, router } from '~/server/trpc';
+import { protectedProcedute, publicProcedure, router } from '~/server/trpc';
 
 export const appRouter = router({
-  getSomeData: publicProcedure.query(async () => {
+  getSomeData: protectedProcedute.query(async () => {
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
     return "Heres the data"

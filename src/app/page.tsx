@@ -12,9 +12,11 @@ export default async function IndexPage() {
   return (
     <div>
       <h2>Query</h2>
-      <Suspense fallback="loading...">
+
+      <button>Clicke me</button>
+      {/* <Suspense fallback="loading...">
         <ClientComponent/>
-      </Suspense>
+      </Suspense> */}
     </div>
   );
 }

@@ -5,12 +5,24 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import { createQueryClient } from "./query-client";
 import { AppRouter, appRouter } from "~/server/router";
+import { headers } from "next/headers";
+import { createTRPCContext } from "~/server/trpc";
 
 export const getQueryClient = cache(createQueryClient);
 
 
+const createContext = cache(async () => {
+	const heads = new Headers(await headers());
+	heads.set("x-trpc-source", "rsc");
+
+	return createTRPCContext({
+    headers: heads
+  });
+});
+
+
 export const trpc = createTRPCOptionsProxy<AppRouter>({
-  ctx: {},
+  ctx: createContext,
   queryClient: getQueryClient,
   router: appRouter,
 });
